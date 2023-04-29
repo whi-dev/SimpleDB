@@ -21,3 +21,7 @@ gradle-app.setting
 .classpath
 # VSCode
 .vscode
+# Binary
+app/bin
+# gradle
+app/build
