@@ -48,7 +48,7 @@ public class FileManager {
     }
   }
   public synchronized BlockID append(String filename) {
-    int newBlkIdx = numBlock(filename);
+    int newBlkIdx = length(filename);
     BlockID blk = new BlockID(filename, newBlkIdx);
     byte[] b = new byte[blockSize];
     try {
@@ -73,14 +73,6 @@ public class FileManager {
   }
   public int blockSize() {
     return blockSize;    
-  }
-  public int numBlock(String filename) {
-    try {
-      RandomAccessFile f = getFile(filename);
-      return (int)f.length() / blockSize;
-    }catch(IOException e) {
-      throw new RuntimeException("cannot access " + filename);
-    }  
   }
   private RandomAccessFile getFile(String filename) throws IOException{
     RandomAccessFile f = openFiles.get(filename);
