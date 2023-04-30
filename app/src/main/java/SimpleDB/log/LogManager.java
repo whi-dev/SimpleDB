@@ -42,8 +42,8 @@ public class LogManager {
     int recordsize = logrec.length;
     int bytesneeded = recordsize + Integer.BYTES; // レコードの必要バイト+長さを記録するバイト
     int recpos = boundary - bytesneeded;
-    // レコードはページの後方追記されており、先頭には最後に追加されたレコードのオフセットが書かれている
-    // 従って、可能な次のレコード書き込み位置は４バイト以降である
+    // レコードはページの後方から追記されており、ページの先頭には最後に追加されたレコードの先頭位置（オフセット）が書かれている
+    // 従って、可能な次のレコードの書き込み位置は５バイト目以降である
     if(recpos < Integer.BYTES) {
       // 次のブロックに移動する
       currentblk = appendNewBlock();
