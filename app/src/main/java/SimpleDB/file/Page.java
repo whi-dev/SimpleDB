@@ -1,4 +1,4 @@
-package SimpleDB.file_manager;
+package SimpleDB.file;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;

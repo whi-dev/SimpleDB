@@ -1,4 +1,4 @@
-package SimpleDB.file_manager;
+package SimpleDB.file;
 
 import java.io.File;
 import java.io.IOException;

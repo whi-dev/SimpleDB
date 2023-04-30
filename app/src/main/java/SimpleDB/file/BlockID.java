@@ -1,4 +1,4 @@
-package SimpleDB.file_manager;
+package SimpleDB.file;
 
 public class BlockID {
   private String filename;
