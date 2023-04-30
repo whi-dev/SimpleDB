@@ -41,14 +41,14 @@ public class LogManager {
     int boundary = logpage.getInt(0);
     int recordsize = logrec.length;
     int bytesneeded = recordsize + Integer.BYTES; // レコードの必要バイト+長さを記録するバイト
-    int recpos = boundary - recordsize;
+    int recpos = boundary - bytesneeded;
     // レコードはページの後方追記されており、先頭には最後に追加されたレコードのオフセットが書かれている
     // 従って、可能な次のレコード書き込み位置は４バイト以降である
     if(recpos < Integer.BYTES) {
       // 次のブロックに移動する
       currentblk = appendNewBlock();
       boundary = logpage.getInt(0);
-      recpos = boundary - recordsize; // 書き込み位置を再計算
+      recpos = boundary - bytesneeded; // 書き込み位置を再計算
     }
     logpage.setBytes(recpos, logrec);
     logpage.setInt(0, recpos); // update boundary
