@@ -13,6 +13,7 @@ public class Buffer {
   private int pins = 0;
   private int txnum = -1;
   private int lsn = -1;
+  private long latestPinnedTimestamp;
 
   public Buffer(FileManager fm, LogManager lm) {
     this.fm = fm;
@@ -34,8 +35,14 @@ public class Buffer {
   public boolean isPinned() {
     return pins > 0;
   }
+  public long latestPinned() {
+    return latestPinnedTimestamp;
+  }
   public int modifyingTx() {
     return txnum;
+  }
+  public boolean isModified() {
+    return txnum == -1;
   }
   void assignToBlock(BlockID blk) {
     flush();
@@ -51,6 +58,7 @@ public class Buffer {
     } 
   }
   void pin() {
+    latestPinnedTimestamp = System.currentTimeMillis();
     pins++;
   }
   void unpin() {
