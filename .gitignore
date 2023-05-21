@@ -25,3 +25,5 @@ gradle-app.setting
 app/bin
 # gradle
 app/build
+
+SimpleDB_3.4

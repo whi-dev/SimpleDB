@@ -29,19 +29,19 @@ public class RecoveryManager {
     int lsn = CommitRecord.writeToLog(lm, txnum);
     lm.flush(lsn);
   }
-  public void rollback() {
+  public void rollback() throws Exception{
     doRollback();
     bm.flushAll(txnum);
     int lsm = RollbackRecord.writeToLog(lm, txnum);
     lm.flush(lsm);
   }
-  public void recover() {
+  public void recover() throws Exception{
     doRecover();
     bm.flushAll(txnum);
     int lsn = CheckPointRecord.writeToLog(lm);
     lm.flush(lsn);
   }
-  public int setInt(Buffer buf, int offset, int newval) {
+  public int setInt(Buffer buf, int offset, int newval) throws Exception{
     int oldval = buf.contents().getInt(offset);
     BlockID blk = buf.block();
     return SetIntLogRecord.writeToLog(lm, txnum, blk, offset, oldval);
@@ -51,7 +51,7 @@ public class RecoveryManager {
     BlockID blk = buf.block();
     return SetStringLogRecord.writeToLog(lm, txnum, blk, offset, oldval);
   }
-  private void doRollback() {
+  private void doRollback() throws Exception{
     Iterator<byte[]> iter = lm.iterator();
     while(iter.hasNext()) {
       byte[] bytes = iter.next();
@@ -64,7 +64,7 @@ public class RecoveryManager {
       }
     }
   }
-  private void doRecover() {
+  private void doRecover() throws Exception{
     Collection<Integer> finishedTx = new ArrayList<>();
     Iterator<byte[]> iter = lm.iterator();
     while(iter.hasNext()) {

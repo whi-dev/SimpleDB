@@ -46,7 +46,7 @@ public class SetStringLogRecord implements LogRecord {
     * and unpins the buffer.
     * @see SimpleDB.tx.recovery.LogRecord#undo(int)
     */
-   public void undo(Transaction tx) {
+   public void undo(Transaction tx) throws Exception{
       tx.pin(blk);
       tx.setString(blk, offset, val, false); // don't log the undo!
       tx.unpin(blk);

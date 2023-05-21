@@ -17,7 +17,7 @@ public interface LogRecord {
 
   int txNumber();
 
-  void undo(Transaction tx);
+  void undo(Transaction tx) throws Exception;
 
   static LogRecord creatLogRecord(byte[] bytes) {
     Page p = new Page(bytes);

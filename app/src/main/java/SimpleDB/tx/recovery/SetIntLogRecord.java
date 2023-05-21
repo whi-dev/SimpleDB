@@ -31,7 +31,7 @@ public class SetIntLogRecord implements LogRecord {
   }
 
   @Override
-  public void undo(Transaction tx) {
+  public void undo(Transaction tx) throws Exception{
     tx.pin(blk);
     tx.setInt(blk, offset, prevVal, false);
     tx.unpin(blk);
