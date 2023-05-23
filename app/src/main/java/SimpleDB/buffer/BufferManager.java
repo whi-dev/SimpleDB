@@ -8,7 +8,9 @@ import java.util.Map;
 import SimpleDB.exception.BufferAbortException;
 import SimpleDB.file.BlockID;
 import SimpleDB.file.FileManager;
-
+/**
+ * バッファプールを管理するオブジェクト
+ */
 public class BufferManager {
   private class CandidateBuffer {
     public Buffer b;
@@ -26,7 +28,6 @@ public class BufferManager {
   private int numAvailable;
   private static final long MXA_TIME = 10000;
 
-
   public BufferManager(FileManager fm, LogManager lm, int numbuffs) {
     bufferpool = new Buffer[numbuffs];
     numAvailable = numbuffs;
@@ -35,11 +36,18 @@ public class BufferManager {
     for (int i = 0; i < numbuffs; ++i) {
       bufferpool[i] = new Buffer(fm, lm);
     }
-
   }
+  /**
+   * 空きバッファの数を返す
+   * @return
+   */
   public synchronized int available() {
     return numAvailable;
   }
+  /**
+   * 与えられたトランザクションナンバーが変更したバッファの内容をディスクに書き込む
+   * @param txnum
+   */
   public synchronized void flushAll(int txnum) {
     for(Buffer buff : bufferpool) {
       if(buff.modifyingTx() == txnum) {
@@ -47,6 +55,11 @@ public class BufferManager {
       }
     }
   }
+  /**
+   * バッファをアンピンする
+   * バッファが誰からもピンされていなければ、待ちスレッドに通知する
+   * @param buf
+   */
   public synchronized void unpin(Buffer buf) {
     buf.unpin();
     if(!buf.isPinned()) {
@@ -55,11 +68,18 @@ public class BufferManager {
       notifyAll();
     }
   }
+  /**
+   * 指定されたブロックに対してバッファを割り当てる
+   * 10秒以上バッファを確保できなければthrowする
+   * @param blk
+   * @return
+   * @throws InterruptedException
+   */
   public synchronized Buffer pin(BlockID blk) throws InterruptedException{
     try {
       long timestamp = System.currentTimeMillis();
       Buffer buf = tryToPin(blk);
-      if(buf == null && waitTooLong(timestamp)) {
+      if(buf == null && !waitTooLong(timestamp)) {
         wait(MXA_TIME);
         tryToPin(blk);
       }

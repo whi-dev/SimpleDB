@@ -5,7 +5,10 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.HashMap;
 import java.util.Map;
-
+/**
+ * ファイルを管理するクラス
+ * ファイルへのブロック操作を提供する
+ */
 public class FileManager {
   private File dbDirectory;
   private int blockSize;
@@ -27,6 +30,11 @@ public class FileManager {
       }
     }
   }
+  /**
+   * ブロックの内容をファイルに読み込む
+   * @param blk
+   * @param p
+   */
   public synchronized void read(BlockID blk, Page p) {
     try{
       RandomAccessFile f = getFile(blk.fileName());
@@ -36,17 +44,26 @@ public class FileManager {
       throw new RuntimeException("cannot read block " + blk);
     }
   }
+  /**
+   * ページの内容をブロックに書き込む
+   * @param blk
+   * @param p
+   */
   public synchronized void write(BlockID blk, Page p)
   {
     try{
       RandomAccessFile f = getFile(blk.fileName());
-      f.getChannel().read(p.contents());
       f.seek(blk.number() * blockSize);
       f.getChannel().write(p.contents());
     }catch(IOException e) {
       throw new RuntimeException("cannot write block " + blk);
     }
   }
+  /**
+   * ファイル末尾にブロックを追加する
+   * @param filename
+   * @return
+   */
   public synchronized BlockID append(String filename) {
     int newBlkIdx = length(filename);
     BlockID blk = new BlockID(filename, newBlkIdx);
@@ -60,10 +77,15 @@ public class FileManager {
     }
     return blk;
   }
+  /**
+   * ファイルのブロック数を取得する
+   * @param filename
+   * @return
+   */
   public int length(String filename) {
     try {
       RandomAccessFile f = getFile(filename);
-      return (int)(f.length());
+      return (int)(f.length() / blockSize);
     }catch(IOException e) {
       throw new RuntimeException("cannot access " + filename);
     }

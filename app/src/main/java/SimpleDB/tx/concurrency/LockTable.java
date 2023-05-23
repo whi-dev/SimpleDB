@@ -25,7 +25,7 @@ public class LockTable {
       throw e;
     }
   }
-  public synchronized void sXock(BlockID blk) throws Exception{
+  public synchronized void xLock(BlockID blk) throws Exception{
     try {
       long timestamp = System.currentTimeMillis();
       while(hasOtherSLock(blk) && waitingTooLong(timestamp)) {

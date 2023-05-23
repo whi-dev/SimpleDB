@@ -44,7 +44,8 @@ public class Transaction {
         rm.recover();
     }
 
-    public void pin(BlockID blk) throws InterruptedException{
+    public void pin(BlockID blk) throws Exception{
+        cm.sLock(blk);
         bl.pin(blk);
     }
     
@@ -53,13 +54,11 @@ public class Transaction {
     }
 
     public int getInt(BlockID blk, int offset) throws Exception{
-        cm.sLock(blk);
         var buf = bl.getBuffer(blk);
         return buf.contents().getInt(offset);
     }
 
     public String getString(BlockID blk, int offset) throws Exception{ 
-        cm.sLock(blk); 
         Buffer buff = bl.getBuffer(blk); 
         return buff.contents().getString(offset); 
     }

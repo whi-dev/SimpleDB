@@ -1,5 +1,7 @@
 package SimpleDB.file;
-
+/**
+ * ファイルのブロックIDを表すオブジェクト
+ */
 public class BlockID {
   private String filename;
   private int blknum;

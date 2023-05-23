@@ -18,7 +18,7 @@ public class ConcurrencyManager {
   public void xLock(BlockID blk) throws Exception{
     if(hasXLock(blk)) {
       sLock(blk);
-      locktable.sXock(blk);
+      locktable.xLock(blk);
       locks.put(blk, "X");
     }
   }

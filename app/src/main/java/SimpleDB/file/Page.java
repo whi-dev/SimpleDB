@@ -4,16 +4,25 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
-
+/**
+ * 固定長のメモリ領域
+ */
 public class Page {
   private ByteBuffer bb;
   private int blockSize;
   public static final Charset CHARSET = StandardCharsets.US_ASCII;
-
+  /**
+   * blocksizeの固定長のメモリ領域を確保する
+   * @param blocksize
+   */
   public Page(int blocksize) {
     bb = ByteBuffer.allocateDirect(blocksize);
     this.blockSize = blocksize;
   }
+  /**
+   * 与えられたメモリ領域をPageオブジェクトとしてラップする
+   * @param b
+   */
   public Page(byte[] b) {
     bb = ByteBuffer.wrap(b);
   }

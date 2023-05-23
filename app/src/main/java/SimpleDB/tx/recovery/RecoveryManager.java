@@ -10,7 +10,11 @@ import SimpleDB.file.BlockID;
 import SimpleDB.log.LogManager;
 import SimpleDB.tx.Transaction;
 import SimpleDB.tx.recovery.LogRecord.LogType;
-
+/**
+ * データファイルの完全性を管理するオブジェクト
+ * 操作ログの出力と、ファイルへの書き込みを管理する
+ * Undoオンリーリカバリ方式を採用している
+ */
 public class RecoveryManager {
   private LogManager lm;
   private BufferManager bm;
@@ -24,28 +28,54 @@ public class RecoveryManager {
     this.bm = bm;
     StartRecord.writeToLog(lm, txnum);
   }
+  /**
+   * メモリ上の変更をディスクに書き込み、コミットレコードのLSNまでのログをログファイルに書き込む
+   */
   public void commit() {
     bm.flushAll(txnum);
     int lsn = CommitRecord.writeToLog(lm, txnum);
     lm.flush(lsn);
   }
+  /**
+   * ロールバックを実行して、メモリ上の変更をディスクに書き込み、ロールバックレコードのLSNまでのログをログファイルに書き込む
+   * @throws Exception
+   */
   public void rollback() throws Exception{
     doRollback();
     bm.flushAll(txnum);
     int lsm = RollbackRecord.writeToLog(lm, txnum);
     lm.flush(lsm);
   }
+  /**
+   * ファイルの回復を実行して、チェックポイントレコードをログファイルに書き込む
+   * @throws Exception
+   */
   public void recover() throws Exception{
     doRecover();
     bm.flushAll(txnum);
     int lsn = CheckPointRecord.writeToLog(lm);
     lm.flush(lsn);
   }
+  /**
+   * 数値設定のログレコードを発行する
+   * @param buf
+   * @param offset
+   * @param newval
+   * @return
+   * @throws Exception
+   */
   public int setInt(Buffer buf, int offset, int newval) throws Exception{
     int oldval = buf.contents().getInt(offset);
     BlockID blk = buf.block();
     return SetIntLogRecord.writeToLog(lm, txnum, blk, offset, oldval);
   }
+  /**
+   * 文字列設定のログレコードを発行する
+   * @param buf
+   * @param offset
+   * @param newval
+   * @return
+   */
   public int setString(Buffer buf, int offset, String newval) {
     String oldval = buf.contents().getString(offset);
     BlockID blk = buf.block();
