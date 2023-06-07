@@ -12,10 +12,11 @@ public class RecordPage {
   private BlockID blk;
   private Layout layout;
 
-  public RecordPage(Transaction tx, BlockID blk, Layout layout) {
+  public RecordPage(Transaction tx, BlockID blk, Layout layout) throws Exception{
     this.tx = tx;
     this.blk = blk;
     this.layout = layout;
+    tx.pin(blk);
   }
   public int getInt(int slot, String fldname) throws Exception{
     int fldpos = offset(slot) + layout.offset(fldname);
